@@ -7,6 +7,7 @@ from random import randint
 
 from ui import Ui_Form
 
+
 class Example(QWidget, Ui_Form):
     def __init__(self):
         super().__init__()
@@ -26,7 +27,7 @@ class Example(QWidget, Ui_Form):
         self.repaint()
 
     def draw(self, qp):
-        qp.setBrush(QColor(255, 255, 0))
+        qp.setBrush(QColor(randint(0, 255), randint(0, 255), randint(0, 255)))
         radius = randint(0, self.height())
         qp.drawEllipse(QRect(randint(0, self.width()), randint(0, self.height()), radius,
                              radius))
