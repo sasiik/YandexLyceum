@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% set room = 'Каюта номер' %}
+<dl>
+    {% for name in names %}
+    <dt>{{name}}</dt>
+    <dd>{{ room }} {{ loop.index }}{% if loop.first %} - Капитан корабля{% endif %}</dd>
+    {% endfor %}
+</dl>
+
+{% endblock %}
+

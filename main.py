@@ -44,6 +44,12 @@ def login():
     return render_template('login.html', form=form, title='Авторизация')
 
 
+@app.route('/distribution')
+def distribution():
+    names = ['Mike', 'Robert', "James", 'William', 'Sam']
+    return render_template('distribution.html', title='Распределение', names=names)
+
+
 if __name__ == '__main__':
     app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
     app.run(port=8080, host='127.0.0.1')
