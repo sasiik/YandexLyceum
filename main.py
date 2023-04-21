@@ -18,6 +18,12 @@ def training(prof):
     return render_template('training.html', title=prof, prof=prof, images=images)
 
 
+@app.route('/list_prof/<list>')
+def list_prof(list):
+    profs = ['Инженер', "Строитель", "Врач", "Механик", "Пилот"]
+    return render_template('list_prof.html', title='Job list', list_type=list, profs=profs)
+
+
 if __name__ == '__main__':
     app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
     app.run(port=8080, host='127.0.0.1')
