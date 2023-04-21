@@ -50,6 +50,23 @@ def distribution():
     return render_template('distribution.html', title='Распределение', names=names)
 
 
+@app.route('/table/<sex>/<int:age>')
+def create_table(sex, age):
+    if sex == 'female':
+        color = '#f54269'
+    elif sex == 'male':
+        color = '#6866e8'
+    else:
+        color = '#9797a1'
+
+    if 0 < age < 21:
+        img = '/static/img/mars.png'
+    else:
+        img = '/static/img/riana.jpeg'
+
+    return render_template('create_table.html', title='Table', img=img, color=color)
+
+
 if __name__ == '__main__':
     app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
     app.run(port=8080, host='127.0.0.1')

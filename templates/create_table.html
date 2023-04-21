@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<table>
+  <tr>
+    <th>Цвет стен</th>
+    <th>Эмблема</th>
+  </tr>
+  <tr>
+    <td>
+      <div style="background-color: {{color}}; height: 400px; width: 300px;"></div>
+    </td>
+    <td>
+      <img src="{{img}}">
+    </td>
+  </tr>
+</table>
+{% endblock %}
+
