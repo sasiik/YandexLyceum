@@ -38,6 +38,12 @@ def answer():
     return render_template('answer.html', title=form_data['title'], form_data=form_data)
 
 
+@app.route('/login', methods=["GET", "POST"])
+def login():
+    form = LoginForm()
+    return render_template('login.html', form=form, title='Авторизация')
+
+
 if __name__ == '__main__':
     app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
     app.run(port=8080, host='127.0.0.1')
