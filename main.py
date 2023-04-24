@@ -51,8 +51,8 @@ mike = ['Trump', 'Mike', 18, 'colonist', 'intern', 'module_4', 'mikesavage@mars.
 team = [scott, mark, drake, mike]
 
 
-def main():
-    db_session.global_init("db/jobs.db")
+def main(db_path):
+    db_session.global_init(db_path)
     db_sess = db_session.create_session()
     if not db_sess.query(User).first():
         for member in team:
@@ -77,13 +77,10 @@ def main():
         db_sess.add(job)
         db_sess.commit()
 
-    for user in db_sess.query(User).all():
+    for user in db_sess.query(User).filter(User.address == 'module_1'):
         print(user)
-
-    for job in db_sess.query(Jobs).all():
-        print(job)
 
 
 if __name__ == '__main__':
-    main()
+    main(db_path=input())
     # app.run()
