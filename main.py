@@ -1,72 +1,74 @@
-import json
+import datetime
 
-from flask import Flask, url_for, request, render_template, redirect
-
-from loginform import LoginForm
+from flask import Flask, render_template, redirect
+from data import db_session
+from data.users import User
+from data.news import News
+from forms.user import RegisterForm
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
 
-@app.route('/<string:title>')
-def index(title):
-    return render_template('base.html', title=title)
+@app.route("/")
+def index():
+    db_sess = db_session.create_session()
+    news = db_sess.query(News).filter(News.is_private != True)
+    return render_template("index.html", news=news)
 
 
-@app.route('/training/<prof>')
-def training(prof):
-    images = [url_for('static', filename="img/mars.png"), url_for('static', filename="img/riana.jpeg")]
-    return render_template('training.html', title=prof, prof=prof, images=images)
+@app.route('/register', methods=['GET', 'POST'])
+def reqister():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        if form.password.data != form.password_again.data:
+            return render_template('register.html', title='Регистрация',
+                                   form=form,
+                                   message="Пароли не совпадают")
+        db_sess = db_session.create_session()
+        if db_sess.query(User).filter(User.email == form.email.data).first():
+            return render_template('register.html', title='Регистрация',
+                                   form=form,
+                                   message="Такой пользователь уже есть")
+        user = User(
+            name=form.name.data,
+            email=form.email.data,
+            about=form.about.data
+        )
+        user.set_password(form.password.data)
+        db_sess.add(user)
+        db_sess.commit()
+        return redirect('/login')
+    return render_template('register.html', title='Регистрация', form=form)
 
 
-@app.route('/list_prof/<list>')
-def list_prof(list):
-    profs = ['Инженер', "Строитель", "Врач", "Механик", "Пилот"]
-    return render_template('list_prof.html', title='Job list', list_type=list, profs=profs)
+scott = ['Scott', 'Ridley', 21, 'captain', 'research engineer', 'module_1', 'scott_chief@mars.org']
+mark = ['Scott', 'Mark', 20, 'colonist', 'doctor', 'module_2', 'mark_doctor@mars.org']
+drake = ['White', 'Drake', 27, 'colonist', 'scientist', 'module_3', 'drake21@mars.org']
+mike = ['Trump', 'Mike', 18, 'colonist', 'intern', 'module_4', 'mikesavage@mars.org']
+
+team = [scott, mark, drake, mike]
 
 
-@app.route('/answer')
-@app.route('/auto_answer')
-def answer():
-    form_data = {'title': 'Form',
-                 "surname": 'Wanty',
-                 "name": 'Mark',
-                 "education": 'School',
-                 "profession": 'Doctor',
-                 "sex": 'Male',
-                 "motivation": "Want to live on Mars",
-                 "ready": "Yes!"}
-    return render_template('answer.html', title=form_data['title'], form_data=form_data)
-
-
-@app.route('/login', methods=["GET", "POST"])
-def login():
-    form = LoginForm()
-    return render_template('login.html', form=form, title='Авторизация')
-
-
-@app.route('/distribution')
-def distribution():
-    names = ['Mike', 'Robert', "James", 'William', 'Sam']
-    return render_template('distribution.html', title='Распределение', names=names)
-
-
-@app.route('/table/<sex>/<int:age>')
-def create_table(sex, age):
-    if sex == 'female':
-        color = '#f54269'
-    elif sex == 'male':
-        color = '#6866e8'
-    else:
-        color = '#9797a1'
-
-    if 0 < age < 21:
-        img = '/static/img/mars.png'
-    else:
-        img = '/static/img/riana.jpeg'
-
-    return render_template('create_table.html', title='Table', img=img, color=color)
+def main():
+    db_session.global_init("db/jobs.db")
+    db_sess = db_session.create_session()
+    if not db_sess.query(User).first():
+        for member in team:
+            user = User()
+            user.surname = member[0]
+            user.name = member[1]
+            user.age = member[2]
+            user.position = member[3]
+            user.speciality = member[4]
+            user.address = member[5]
+            user.email = member[6]
+            db_sess.add(user)
+        db_sess.commit()
+    for user in db_sess.query(User).all():
+        print(user)
 
 
 if __name__ == '__main__':
-    app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
-    app.run(port=8080, host='127.0.0.1')
+    main()
+    # app.run()
