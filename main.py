@@ -44,9 +44,9 @@ def reqister():
 
 
 scott = ['Scott', 'Ridley', 21, 'captain', 'research engineer', 'module_1', 'scott_chief@mars.org']
-mark = ['Scott', 'Mark', 20, 'colonist', 'doctor', 'module_2', 'mark_doctor@mars.org']
-drake = ['White', 'Drake', 27, 'colonist', 'scientist', 'module_3', 'drake21@mars.org']
-mike = ['Trump', 'Mike', 18, 'colonist', 'intern', 'module_4', 'mikesavage@mars.org']
+mark = ['Scott', 'Mark', 20, 'colonist', 'doctor', 'module_1', 'mark_doctor@mars.org']
+drake = ['White', 'Drake', 27, 'colonist', 'scientist', 'module_2', 'drake21@mars.org']
+mike = ['Trump', 'Mike', 18, 'colonist', 'intern', 'module_2', 'mikesavage@mars.org']
 
 team = [scott, mark, drake, mike]
 
@@ -77,8 +77,9 @@ def main(db_path):
         db_sess.add(job)
         db_sess.commit()
 
-    for user in db_sess.query(User).filter(User.address == 'module_1'):
-        print(user)
+    for user in db_sess.query(User).filter(User.address == 'module_1', User.speciality.notlike('%engineer%'),
+                                           User.position.notlike('%engineer%')):
+        print(user.id)
 
 
 if __name__ == '__main__':
