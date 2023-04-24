@@ -14,8 +14,10 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 @app.route("/")
 def index():
     db_sess = db_session.create_session()
-    news = db_sess.query(News).filter(News.is_private != True)
-    return render_template("index.html", news=news)
+    jobs = db_sess.query(Jobs).all()
+    for item in jobs:
+        print(item.work_size)
+    return render_template("index.html", jobs=jobs)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -83,5 +85,5 @@ def main(db_path):
 
 
 if __name__ == '__main__':
-    main(db_path=input())
-    # app.run()
+    main('db/jobs.db')
+    app.run()
