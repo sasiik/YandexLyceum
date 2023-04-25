@@ -5,6 +5,7 @@ from data import db_session
 from data.jobs import Jobs
 from data.users import User
 from data.news import News
+from forms.job import JobsForm
 from forms.loginform import LoginForm
 from forms.news import NewsForm
 from forms.user import RegisterForm
@@ -29,8 +30,16 @@ def index():
         news = db_sess.query(News).filter(
             (News.user == current_user) | (News.is_private != True))
     else:
-        news = db_sess.query(News).filter(News.is_private != True)
+        news = db_sess.query(News).all()
+    print(news)
     return render_template("index.html", news=news)
+
+
+@app.route("/jobs")
+def jobs():
+    db_sess = db_session.create_session()
+    jobs = db_sess.query(Jobs).all()
+    return render_template("jobs.html", jobs=jobs)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -146,6 +155,26 @@ def edit_news(id):
                            )
 
 
+@app.route('/addjob', methods=['GET', "POST"])
+@login_required
+def addjob():
+    form = JobsForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        job = Jobs()
+        job.job = form.job.data
+        job.team_leader = form.team_leader.data
+        job.work_size = form.work_size.data
+        job.collaborators = form.collaborators.data
+        job.is_finished = form.is_finished.data
+        current_user.jobs.append(job)
+        db_sess.merge(current_user)
+        db_sess.commit()
+        return redirect('/jobs')
+    return render_template('addjob.html', title='Добавление работы',
+                           form=form)
+
+
 @app.route('/logout')
 @login_required
 def logout():
@@ -168,12 +197,12 @@ def news_delete(id):
     return redirect('/')
 
 
-scott = ['Scott', 'Ridley', 21, 'captain', 'research engineer', 'module_1', 'scott_chief@mars.org']
-mark = ['Scott', 'Mark', 20, 'colonist', 'doctor', 'module_2', 'mark_doctor@mars.org']
-drake = ['White', 'Drake', 27, 'colonist', 'scientist', 'module_3', 'drake21@mars.org']
-mike = ['Trump', 'Mike', 18, 'colonist', 'intern', 'module_4', 'mikesavage@mars.org']
-
-team = [scott, mark, drake, mike]
+# scott = ['Scott', 'Ridley', 21, 'captain', 'research engineer', 'module_1', 'scott_chief@mars.org']
+# mark = ['Scott', 'Mark', 20, 'colonist', 'doctor', 'module_2', 'mark_doctor@mars.org']
+# drake = ['White', 'Drake', 27, 'colonist', 'scientist', 'module_3', 'drake21@mars.org']
+# mike = ['Trump', 'Mike', 18, 'colonist', 'intern', 'module_4', 'mikesavage@mars.org']
+#
+# team = [scott, mark, drake, mike]
 
 
 def main():
