@@ -175,6 +175,42 @@ def addjob():
                            form=form)
 
 
+@app.route('/jobs/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_job(id):
+    form = JobsForm()
+    if request.method == "GET":
+        db_sess = db_session.create_session()
+        jobs = db_sess.query(Jobs).filter(Jobs.id == id,
+                                          ((Jobs.user == current_user) | (current_user.id == 1))).first()
+        if jobs:
+            form.job.data = jobs.job
+            form.collaborators.data = jobs.collaborators
+            form.is_finished.data = jobs.is_finished
+            form.work_size.data = jobs.work_size
+            form.team_leader.data = jobs.team_leader
+        else:
+            abort(404)
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        jobs = db_sess.query(Jobs).filter(Jobs.id == id,
+                                          ((Jobs.user == current_user) | (current_user.id == 1))).first()
+        if jobs:
+            jobs.job = form.job.data
+            jobs.team_leader = form.team_leader.data
+            jobs.work_size = form.work_size.data
+            jobs.collaborators = form.collaborators.data
+            jobs.is_finished = form.is_finished.data
+            db_sess.commit()
+            return redirect('/')
+        else:
+            abort(404)
+    return render_template('addjob.html',
+                           title='Редактирование работы',
+                           form=form
+                           )
+
+
 @app.route('/logout')
 @login_required
 def logout():
@@ -194,7 +230,7 @@ def news_delete(id):
         db_sess.commit()
     else:
         abort(404)
-    return redirect('/')
+    return redirect('/jobs')
 
 
 # scott = ['Scott', 'Ridley', 21, 'captain', 'research engineer', 'module_1', 'scott_chief@mars.org']

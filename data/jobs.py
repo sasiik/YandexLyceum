@@ -20,7 +20,7 @@ class Jobs(SqlAlchemyBase):
     end_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                  nullable=True)
     is_finished = sqlalchemy.Column(sqlalchemy.Boolean, nullable=True)
-    leader = orm.relationship('User', back_populates='jobs')
+    user = orm.relationship('User', back_populates='jobs')
 
     # leader = orm.relationship('User', back_populates='jobs')
     # def __repr__(self):
