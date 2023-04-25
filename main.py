@@ -14,10 +14,8 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 @app.route("/")
 def index():
     db_sess = db_session.create_session()
-    jobs = db_sess.query(Jobs).all()
-    for item in jobs:
-        print(item.work_size)
-    return render_template("index.html", jobs=jobs)
+    news = db_sess.query(News).filter(News.is_private != True)
+    return render_template("index.html", news=news)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -34,56 +32,62 @@ def reqister():
                                    form=form,
                                    message="Такой пользователь уже есть")
         user = User(
+            surname=form.surname.data,
             name=form.name.data,
             email=form.email.data,
-            about=form.about.data
+            age=form.age.data,
+            position=form.position.data,
+            speciality=form.speciality.data,
+            address=form.address.data
+
         )
         user.set_password(form.password.data)
         db_sess.add(user)
         db_sess.commit()
-        return redirect('/login')
+        return redirect('/')
     return render_template('register.html', title='Регистрация', form=form)
 
 
 scott = ['Scott', 'Ridley', 21, 'captain', 'research engineer', 'module_1', 'scott_chief@mars.org']
-mark = ['Scott', 'Mark', 20, 'colonist', 'doctor', 'module_1', 'mark_doctor@mars.org']
-drake = ['White', 'Drake', 27, 'colonist', 'scientist', 'module_2', 'drake21@mars.org']
-mike = ['Trump', 'Mike', 18, 'colonist', 'intern', 'module_2', 'mikesavage@mars.org']
+mark = ['Scott', 'Mark', 20, 'colonist', 'doctor', 'module_2', 'mark_doctor@mars.org']
+drake = ['White', 'Drake', 27, 'colonist', 'scientist', 'module_3', 'drake21@mars.org']
+mike = ['Trump', 'Mike', 18, 'colonist', 'intern', 'module_4', 'mikesavage@mars.org']
 
 team = [scott, mark, drake, mike]
 
 
-def main(db_path):
-    db_session.global_init(db_path)
-    db_sess = db_session.create_session()
-    if not db_sess.query(User).first():
-        for member in team:
-            user = User()
-            user.surname = member[0]
-            user.name = member[1]
-            user.age = member[2]
-            user.position = member[3]
-            user.speciality = member[4]
-            user.address = member[5]
-            user.email = member[6]
-            db_sess.add(user)
-        db_sess.commit()
-    if not db_sess.query(Jobs).first():
-        job = Jobs()
-        job.team_leader = 1
-        job.job = 'deployment of residential modules 1 and 2'
-        job.work_size = 15
-        job.collaborators = '2, 3'
-        job.start_date = datetime.datetime.now()
-        job.is_finished = False
-        db_sess.add(job)
-        db_sess.commit()
-
-    for user in db_sess.query(User).filter(User.address == 'module_1', User.speciality.notlike('%engineer%'),
-                                           User.position.notlike('%engineer%')):
-        print(user.id)
+def main():
+    db_session.global_init("db/jobs.db")
+    # if not db_sess.query(User).first():
+    #     for member in team:
+    #         user = User()
+    #         user.surname = member[0]
+    #         user.name = member[1]
+    #         user.age = member[2]
+    #         user.position = member[3]
+    #         user.speciality = member[4]
+    #         user.address = member[5]
+    #         user.email = member[6]
+    #         db_sess.add(user)
+    #     db_sess.commit()
+    # if not db_sess.query(Jobs).first():
+    #     job = Jobs()
+    #     job.team_leader = 1
+    #     job.job = 'deployment of residential modules 1 and 2'
+    #     job.work_size = 15
+    #     job.collaborators = '2, 3'
+    #     job.start_date = datetime.datetime.now()
+    #     job.is_finished = False
+    #     db_sess.add(job)
+    #     db_sess.commit()
+    #
+    # for user in db_sess.query(User).all():
+    #     print(user)
+    #
+    # for job in db_sess.query(Jobs).all():
+    #     print(job)
 
 
 if __name__ == '__main__':
-    main('db/jobs.db')
+    main()
     app.run()
