@@ -1,7 +1,7 @@
 import datetime
 
-from flask import Flask, render_template, redirect, make_response, request, abort
-from data import db_session
+from flask import Flask, render_template, redirect, make_response, request, abort, jsonify
+from data import db_session, api, news_resources, user_resources
 from data.jobs import Jobs
 from data.users import User
 from data.news import News
@@ -10,8 +10,14 @@ from forms.loginform import LoginForm
 from forms.news import NewsForm
 from forms.user import RegisterForm
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from flask_restful import reqparse, abort, Api, Resource
 
 app = Flask(__name__)
+myapi = Api(app)
+myapi.add_resource(news_resources.NewsListResource, '/api/v2/news')
+myapi.add_resource(news_resources.NewsResource, '/api/v2/news/<int:news_id>')
+myapi.add_resource(user_resources.UserListResource, '/api/v2/user')
+myapi.add_resource(user_resources.UserResource, '/api/v2/user/<int:user_id>')
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -94,6 +100,7 @@ def login():
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         user = db_sess.query(User).filter(User.email == form.email.data).first()
+        print(user)
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
             return redirect("/")
@@ -210,6 +217,7 @@ def edit_job(id):
                            form=form
                            )
 
+
 @app.route('/jobs_delete/<int:id>', methods=['GET', 'POST'])
 @login_required
 def jobs_delete(id):
@@ -247,46 +255,21 @@ def news_delete(id):
     return redirect('/jobs')
 
 
-# scott = ['Scott', 'Ridley', 21, 'captain', 'research engineer', 'module_1', 'scott_chief@mars.org']
-# mark = ['Scott', 'Mark', 20, 'colonist', 'doctor', 'module_2', 'mark_doctor@mars.org']
-# drake = ['White', 'Drake', 27, 'colonist', 'scientist', 'module_3', 'drake21@mars.org']
-# mike = ['Trump', 'Mike', 18, 'colonist', 'intern', 'module_4', 'mikesavage@mars.org']
-#
-# team = [scott, mark, drake, mike]
+@app.errorhandler(404)
+def not_found(error):
+    return make_response(jsonify({'error': 'Not found'}), 404)
+
+
+@app.errorhandler(400)
+def bad_request(_):
+    return make_response(jsonify({'error': 'Bad Request'}), 400)
 
 
 def main():
-    db_session.global_init("db/jobs.db")
-    # if not db_sess.query(User).first():
-    #     for member in team:
-    #         user = User()
-    #         user.surname = member[0]
-    #         user.name = member[1]
-    #         user.age = member[2]
-    #         user.position = member[3]
-    #         user.speciality = member[4]
-    #         user.address = member[5]
-    #         user.email = member[6]
-    #         db_sess.add(user)
-    #     db_sess.commit()
-    # if not db_sess.query(Jobs).first():
-    #     job = Jobs()
-    #     job.team_leader = 1
-    #     job.job = 'deployment of residential modules 1 and 2'
-    #     job.work_size = 15
-    #     job.collaborators = '2, 3'
-    #     job.start_date = datetime.datetime.now()
-    #     job.is_finished = False
-    #     db_sess.add(job)
-    #     db_sess.commit()
-    #
-    # for user in db_sess.query(User).all():
-    #     print(user)
-    #
-    # for job in db_sess.query(Jobs).all():
-    #     print(job)
+    db_session.global_init("db/blogs.db")
+    app.register_blueprint(api.blueprint)
+    app.run()
 
 
 if __name__ == '__main__':
     main()
-    app.run()
