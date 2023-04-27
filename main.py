@@ -1,7 +1,7 @@
 import datetime
 
 from flask import Flask, render_template, redirect, make_response, request, abort, jsonify
-from data import db_session, api, news_resources, user_resources
+from data import db_session, api, news_resources, user_resources, jobs_resources
 from data.jobs import Jobs
 from data.users import User
 from data.news import News
@@ -18,6 +18,8 @@ myapi.add_resource(news_resources.NewsListResource, '/api/v2/news')
 myapi.add_resource(news_resources.NewsResource, '/api/v2/news/<int:news_id>')
 myapi.add_resource(user_resources.UserListResource, '/api/v2/user')
 myapi.add_resource(user_resources.UserResource, '/api/v2/user/<int:user_id>')
+myapi.add_resource(jobs_resources.JobsListResource, '/api/v2/job')
+myapi.add_resource(jobs_resources.JobResource, '/api/v2/job/<int:job_id>')
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)

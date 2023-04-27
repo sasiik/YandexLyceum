@@ -62,26 +62,46 @@ from requests import get, post, delete, patch
 #             json={'team_leader': 2}
 #             ).json())
 
-print(get('http://localhost:5000/api/v2/user').json())
-print(get('http://localhost:5000/api/v2/user/1').json())
-print(get('http://localhost:5000/api/v2/user/98').json())
-print(get('http://localhost:5000/api/v2/user/g').json())
-print(delete('http://localhost:5000/api/v2/user/1').json())
-print(delete('http://localhost:5000/api/v2/user/98').json())
-print(delete('http://localhost:5000/api/v2/user/q').json())
-print(get('http://localhost:5000/api/v2/user/98').json())
-print(post('http://localhost:5000/api/v2/user', json={
-    'name': 'Stas',
-    'surname': 'Stupko',
-    'age': 17,
-    'position': 'middle',
-    'speciality': 'cook',
-    'address': 'idk',
-    'email': 'stas@stas.stas'
-}))
-print(post('http://localhost:5000/api/v2/user', json={
-    'name': 'Stas',
-    'surname': 'Stupko',
-    'age': 17
-}))
-print(post('http://localhost:5000/api/v2/user'))
+# print(get('http://localhost:5000/api/v2/user').json())
+# print(get('http://localhost:5000/api/v2/user/1').json())
+# print(get('http://localhost:5000/api/v2/user/98').json())
+# print(get('http://localhost:5000/api/v2/user/g').json())
+# print(delete('http://localhost:5000/api/v2/user/1').json())
+# print(delete('http://localhost:5000/api/v2/user/98').json())
+# print(delete('http://localhost:5000/api/v2/user/q').json())
+# print(get('http://localhost:5000/api/v2/user/98').json())
+# print(post('http://localhost:5000/api/v2/user', json={
+#     'name': 'Stas',
+#     'surname': 'Stupko',
+#     'age': 17,
+#     'position': 'middle',
+#     'speciality': 'cook',
+#     'address': 'idk',
+#     'email': 'stas@stas.stas'
+# }))
+# print(post('http://localhost:5000/api/v2/user', json={
+#     'name': 'Stas',
+#     'surname': 'Stupko',
+#     'age': 17
+# }))
+# print(post('http://localhost:5000/api/v2/user'))
+print(get('http://localhost:5000/api/v2/job').json())
+print(get('http://localhost:5000/api/v2/job/1').json())
+print(get('http://localhost:5000/api/v2/job/98').json())
+print(get('http://localhost:5000/api/v2/job/g').json())
+print(delete('http://localhost:5000/api/v2/job/1').json())
+print(delete('http://localhost:5000/api/v2/job/98').json())
+print(delete('http://localhost:5000/api/v2/job/q').json())
+print(get('http://localhost:5000/api/v2/job/98').json())
+print(post('http://localhost:5000/api/v2/job', json={
+    'team_leader': 1,
+    'job': 'make cocaine',
+    'work_size': 15,
+    'collaborators': '2, 3, 4',
+    'is_finished': False
+}).json())
+print(post('http://localhost:5000/api/v2/job', json={
+    'team_leader': 1,
+    'job': 'make cocaine'
+}).json())
+print(post('http://localhost:5000/api/v2/job').json())
